@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:7
+    container_name: billing-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  api:
+    build: .
+    container_name: billing-api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/billing_system
+      - JWT_SECRET=changeme
+    ports:
+      - "4000:4000"
+volumes:
+  mongo_data:
